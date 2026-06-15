@@ -1,0 +1,468 @@
+/* ------------------------------------------------------------------ */
+/* Phantom Sans                                                        */
+/* Canonical Hack Club CDN declarations. Replace these @font-face      */
+/* blocks if you have a specific set of Phantom Sans files to ship.    */
+/* ------------------------------------------------------------------ */
+@font-face {
+  font-family: "Phantom Sans";
+  src: url("https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff2") format("woff2"),
+       url("https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Phantom Sans";
+  src: url("https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff2") format("woff2"),
+       url("https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Phantom Sans";
+  src: url("https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Italic.woff2") format("woff2"),
+       url("https://assets.hackclub.com/fonts/Phantom_Sans_0.7/Italic.woff") format("woff");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ------------------------------------------------------------------ */
+/* Palette (Hack Club)                                                 */
+/* ------------------------------------------------------------------ */
+:root {
+  --red: #ec3750;
+  --orange: #ff8c37;
+  --yellow: #f1c40f;
+  --green: #33d6a6;
+  --cyan: #5bc0de;
+  --blue: #338eda;
+  --purple: #a633d6;
+  --muted: #8492a6;
+
+  --black: #1f2d3d;
+  --white: #ffffff;
+  --snow: #fffaf7;
+  --smoke: #e0e6ed;
+
+  --rule: 6px; /* top brand rule height */
+}
+
+/* ------------------------------------------------------------------ */
+/* Base                                                                */
+/* ------------------------------------------------------------------ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: "Phantom Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    system-ui, sans-serif;
+  color: var(--black);
+  background: var(--snow);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The single brand gesture: a thin red rule pinned to the top edge. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: var(--rule);
+  background: var(--red);
+  z-index: 10;
+}
+
+/* ------------------------------------------------------------------ */
+/* Layout — no container chrome, just a measured column                */
+/* ------------------------------------------------------------------ */
+.page {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 28px 40px;
+}
+
+/* Footer — small centered black & white Hack Club flag. */
+.site-footer {
+  flex: 0 0 auto;
+  text-align: center;
+  padding: 8px 24px 32px;
+}
+.site-footer img {
+  height: 30px;
+  width: auto;
+  vertical-align: middle;
+  opacity: 0.85;
+  transition: opacity 0.15s ease;
+}
+.site-footer a:hover img {
+  opacity: 1;
+}
+.footer-credit {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.footer-credit a {
+  color: var(--muted);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.footer-credit a:hover {
+  color: var(--red);
+}
+
+.shell {
+  width: 100%;
+  max-width: 488px;
+  text-align: center; /* centers hero / headline / lede / links */
+  animation: shell-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Gentle entrance — fade + a few px of rise. */
+@keyframes shell-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hero emoji image. */
+.hero-emoji {
+  display: block;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 26px; /* centered */
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+.hero-emoji:hover {
+  transform: rotate(-8deg) scale(1.05);
+}
+
+h1 {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+
+.lede {
+  font-size: 16px;
+  color: var(--muted);
+  margin: 0 auto 32px; /* centered, constrained measure */
+  max-width: 40ch;
+}
+
+/* ------------------------------------------------------------------ */
+/* Option buttons — emoji tile · title · description                   */
+/* ------------------------------------------------------------------ */
+.option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* form wrapper around a submit-button option shouldn't add spacing */
+.option-list form {
+  display: contents;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  text-align: left;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1.5px solid var(--smoke);
+  background: var(--white);
+  color: var(--black);
+  font-family: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.option:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(31, 45, 61, 0.08);
+}
+.option:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Solid red — primary action. */
+.option--primary,
+.option--danger {
+  background: var(--red);
+  border-color: var(--red);
+  color: var(--white);
+}
+.option--primary:hover,
+.option--danger:hover {
+  background: #d92c45; /* red, one shade down */
+  border-color: #d92c45;
+}
+.option--primary .option-desc,
+.option--danger .option-desc {
+  color: rgba(255, 255, 255, 0.82);
+}
+/* Red outline — secondary action. */
+.option--secondary {
+  background: var(--white);
+  border-color: var(--red);
+  color: var(--black);
+}
+.option--secondary:hover {
+  background: rgba(236, 55, 80, 0.06);
+}
+
+/* Left emoji image. */
+.option-emoji {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.option-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.option-title {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.option-desc {
+  display: block;
+  margin-top: 3px;
+  font-size: 13.5px;
+  font-weight: 400;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+/* "Why do we need this?" — a plain text link under the description. */
+.learn-more {
+  margin: -18px 0 30px;
+  font-size: 14.5px;
+}
+.learn-more a {
+  color: var(--red);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Long-form body copy (the /why page) — left-aligned for readability. */
+.prose {
+  text-align: left;
+  margin-top: 4px;
+}
+.prose p {
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--black);
+  margin-bottom: 14px;
+}
+.prose p:last-child {
+  margin-bottom: 0;
+}
+.prose strong {
+  font-weight: 700;
+}
+
+/* Secondary call-to-action (red outline). */
+.btn-secondary {
+  background: var(--white);
+  border-color: var(--red);
+  color: var(--red);
+}
+.btn-secondary:hover {
+  background: rgba(236, 55, 80, 0.06);
+}
+
+/* Opt-out: a plain text link beneath the buttons. */
+.opt-out-link {
+  margin-top: 22px;
+  font-size: 14.5px;
+  color: var(--muted);
+}
+.opt-out-link a {
+  color: var(--red);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Single call-to-action button (done / error pages)                   */
+/* ------------------------------------------------------------------ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 26px;
+  border-radius: 12px;
+  border: 1.5px solid transparent;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s ease, transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(31, 45, 61, 0.12);
+}
+.btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+.btn-primary {
+  background: var(--red);
+  border-color: var(--red);
+  color: var(--white);
+}
+.btn-primary:hover {
+  background: #d92c45;
+}
+
+/* ------------------------------------------------------------------ */
+/* Misc text bits                                                      */
+/* ------------------------------------------------------------------ */
+.fallback {
+  margin-top: 28px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.fallback a {
+  color: var(--red);
+  font-weight: 700;
+}
+
+.error-id {
+  margin-top: 22px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.error-id code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--white);
+  border: 1px solid var(--smoke);
+  border-radius: 6px;
+  padding: 3px 9px;
+  color: var(--black);
+}
+
+.support a {
+  color: var(--red);
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------------------ */
+/* Dev-only testing panel — collapsed <details> dropdown               */
+/* (never rendered in production)                                      */
+/* ------------------------------------------------------------------ */
+.dev-box {
+  margin-top: 40px;
+  border: 2px dashed var(--purple);
+  border-radius: 12px;
+}
+.dev-summary {
+  cursor: pointer;
+  padding: 13px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--purple);
+  list-style: none;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dev-summary::-webkit-details-marker {
+  display: none;
+}
+.dev-hint {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.dev-summary::after {
+  content: "+";
+  font-size: 16px;
+  line-height: 1;
+}
+.dev-box[open] .dev-summary::after {
+  content: "\2212"; /* minus */
+}
+.dev-actions {
+  padding: 0 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dev-btn {
+  display: block;
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: var(--white);
+  border: 1px solid var(--smoke);
+  color: var(--black);
+  font-family: inherit;
+  font-size: 14px;
+  text-decoration: none;
+}
+.dev-btn:hover {
+  border-color: var(--purple);
+}
+
+/* ------------------------------------------------------------------ */
+/* Respect users who prefer reduced motion                             */
+/* ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .option:hover,
+  .btn:hover,
+  .hero-emoji:hover {
+    transform: none;
+  }
+}
