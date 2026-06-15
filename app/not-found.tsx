@@ -12,7 +12,7 @@ export default function NotFound() {
           check that you opened the full link from your club application.
         </p>
         <p className="learn-more">
-          <Link href="https://hackclub.com/clubs/">Back to Hack Club Clubs</Link>
+          <Link href="https://apply.hackclub.com">Back to Apply</Link>
         </p>
       </div>
     </main>
