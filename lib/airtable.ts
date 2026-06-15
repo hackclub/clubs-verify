@@ -98,18 +98,28 @@ export async function updateIdvStatus(
 export async function upsertIdvResult(
   submissionId: string,
   status: IdvStatus,
+  email?: string,
 ): Promise<void> {
   if (isDemoMode()) {
-    warnDemo("idv_results upsert", `submission_id=${submissionId} -> ${status}`);
+    warnDemo(
+      "idv_results upsert",
+      `submission_id=${submissionId} -> ${status}${email ? ` (email=${email})` : ""}`,
+    );
     return;
   }
+
+  const fields: Record<string, unknown> = {
+    submission_id: submissionId,
+    idv_status: status,
+  };
+  if (email) fields.email = email;
 
   const res = await fetch(encodePath(IDV_RESULTS_TABLE), {
     method: "PATCH",
     headers: authHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify({
       performUpsert: { fieldsToMergeOn: ["submission_id"] },
-      records: [{ fields: { submission_id: submissionId, idv_status: status } }],
+      records: [{ fields }],
     }),
     cache: "no-store",
   });

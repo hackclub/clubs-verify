@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
 
   try {
     // 2. Exchange the code; read verification_status; discard all tokens.
-    const { verificationStatus, firstName } = await exchangeCodeForClaims(
+    const { verificationStatus, firstName, email } = await exchangeCodeForClaims(
       code,
       state!,
     );
@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
     }
 
     // 3. Verified -> upsert the result into idv_results (keyed on submission_id).
-    await upsertIdvResult(submissionId, "verified");
+    await upsertIdvResult(submissionId, "verified", email);
     const doneUrl = new URL("/done", origin);
     if (firstName) doneUrl.searchParams.set("name", firstName);
     return NextResponse.redirect(doneUrl);

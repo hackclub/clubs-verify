@@ -53,6 +53,7 @@ export async function buildAuthorizationUrl(state: string): Promise<string> {
 export interface VerificationClaims {
   verificationStatus: unknown;
   firstName?: string;
+  email?: string;
 }
 
 /**
@@ -88,9 +89,11 @@ export async function exchangeCodeForClaims(
 
   try {
     const claims = tokenSet.claims();
+    const email = typeof claims.email === "string" ? claims.email : undefined;
     return {
       verificationStatus: claims["verification_status"],
       firstName: deriveFirstName(claims),
+      email,
     };
   } finally {
     // Drop all token material. Nothing is stored, logged, or returned.
