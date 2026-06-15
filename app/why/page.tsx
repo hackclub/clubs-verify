@@ -5,12 +5,12 @@ import { isDev, DEV_SUBMISSION_ID } from "@/lib/dev";
 
 export const dynamic = "force-dynamic";
 
-export default function WhyPage({
+export default async function WhyPage({
   searchParams,
 }: {
-  searchParams: { id?: string };
+  searchParams: Promise<{ id?: string }>;
 }) {
-  let id = searchParams.id;
+  let id = (await searchParams).id;
 
   // We want a valid id so the "back" button can return to the right place. In
   // dev we fall back to a throwaway id; in prod a bad id 404s.

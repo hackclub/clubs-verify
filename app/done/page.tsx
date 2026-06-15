@@ -3,13 +3,14 @@ import { sanitizeDisplayName } from "@/lib/validate";
 
 export const dynamic = "force-dynamic";
 
-export default function DonePage({
+export default async function DonePage({
   searchParams,
 }: {
-  searchParams: { name?: string };
+  searchParams: Promise<{ name?: string }>;
 }) {
   const formUrl = process.env.CLUB_APPLICATION_FORM_URL || "/";
-  const name = sanitizeDisplayName(searchParams.name);
+  const { name: rawName } = await searchParams;
+  const name = sanitizeDisplayName(rawName);
   const heading = name ? `${name}, you're verified!` : "You're done!";
 
   return (

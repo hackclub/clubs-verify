@@ -6,12 +6,12 @@ import DevPanel from "@/components/DevPanel";
 
 export const dynamic = "force-dynamic";
 
-export default function LandingPage({
+export default async function LandingPage({
   searchParams,
 }: {
-  searchParams: { id?: string };
+  searchParams: Promise<{ id?: string }>;
 }) {
-  let id = searchParams.id;
+  let id = (await searchParams).id;
 
   // Middleware already 400s invalid ids before we render; this is a defensive
   // backstop so the page never builds links from an untrusted value. In

@@ -5,12 +5,12 @@ import { isDev, DEV_SUBMISSION_ID } from "@/lib/dev";
 
 export const dynamic = "force-dynamic";
 
-export default function OptOutPage({
+export default async function OptOutPage({
   searchParams,
 }: {
-  searchParams: { id?: string };
+  searchParams: Promise<{ id?: string }>;
 }) {
-  let id = searchParams.id;
+  let id = (await searchParams).id;
 
   if (!isValidSubmissionId(id)) {
     if (isDev) {

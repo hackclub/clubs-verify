@@ -8,12 +8,12 @@ export const dynamic = "force-dynamic";
 const SIGNUP_URL =
   "https://auth.hackclub.com/welcome?return_to=https%3A%2F%2Fauth.hackclub.com%2Fverifications%2Fnew";
 
-export default function NewAccountPage({
+export default async function NewAccountPage({
   searchParams,
 }: {
-  searchParams: { id?: string };
+  searchParams: Promise<{ id?: string }>;
 }) {
-  let id = searchParams.id;
+  let id = (await searchParams).id;
 
   // Keep a valid id so the user can return to verification after signing up.
   if (!isValidSubmissionId(id)) {

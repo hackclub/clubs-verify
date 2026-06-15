@@ -3,12 +3,12 @@ import { isValidSubmissionId, sanitizeDisplayName } from "@/lib/validate";
 
 export const dynamic = "force-dynamic";
 
-export default function ErrorPage({
+export default async function ErrorPage({
   searchParams,
 }: {
-  searchParams: { reason?: string; eid?: string; id?: string; name?: string };
+  searchParams: Promise<{ reason?: string; eid?: string; id?: string; name?: string }>;
 }) {
-  const { reason, eid, id, name: rawName } = searchParams;
+  const { reason, eid, id, name: rawName } = await searchParams;
 
   // ---- Not-verified variant ------------------------------------------------
   if (reason === "not_verified") {
