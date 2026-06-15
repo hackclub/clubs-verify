@@ -4,6 +4,7 @@
 const BASE_ID = "appUfrUFraxH3D5Ob";
 const LEADERS_TABLE = "Leaders";
 const CLUBS_TABLE = "Clubs";
+const IDV_RESULTS_TABLE = "idv_results";
 const LINK_FIELD = "rel_leader_to_clubs";
 
 const API_ROOT = "https://api.airtable.com/v0";
@@ -85,6 +86,35 @@ export async function updateIdvStatus(
   });
   if (!res.ok) {
     throw new Error(`Airtable status update failed (${res.status})`);
+  }
+}
+
+/**
+ * Upserts an idv_results row keyed on {submission_id}: updates the matching
+ * record's idv_status if one exists, otherwise creates a new record. Uses
+ * Airtable's native performUpsert so the find/update/create is atomic.
+ * Caller must have already validated submissionId against the strict allowlist.
+ */
+export async function upsertIdvResult(
+  submissionId: string,
+  status: IdvStatus,
+): Promise<void> {
+  if (isDemoMode()) {
+    warnDemo("idv_results upsert", `submission_id=${submissionId} -> ${status}`);
+    return;
+  }
+
+  const res = await fetch(encodePath(IDV_RESULTS_TABLE), {
+    method: "PATCH",
+    headers: authHeaders({ "Content-Type": "application/json" }),
+    body: JSON.stringify({
+      performUpsert: { fieldsToMergeOn: ["submission_id"] },
+      records: [{ fields: { submission_id: submissionId, idv_status: status } }],
+    }),
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`Airtable idv_results upsert failed (${res.status})`);
   }
 }
 

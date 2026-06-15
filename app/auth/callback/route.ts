@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { verifyState } from "@/lib/state";
 import { exchangeCodeForClaims, isVerified } from "@/lib/oidc";
-import { findLeaderBySubmissionId, updateIdvStatus } from "@/lib/airtable";
+import { upsertIdvResult } from "@/lib/airtable";
 import { isValidSubmissionId } from "@/lib/validate";
 import { limitCallback } from "@/lib/rateLimit";
 import { newErrorId, logError } from "@/lib/errors";
@@ -49,15 +49,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    // 3. Verified -> mark the Leaders record.
-    const record = await findLeaderBySubmissionId(submissionId);
-    if (!record) {
-      const eid = newErrorId();
-      logError(eid, "auth/callback", new Error("no Leaders record for submissionId"));
-      return errorRedirect(eid);
-    }
-
-    await updateIdvStatus(record.id, "verified");
+    // 3. Verified -> upsert the result into idv_results (keyed on submission_id).
+    await upsertIdvResult(submissionId, "verified");
     const doneUrl = new URL("/done", origin);
     if (firstName) doneUrl.searchParams.set("name", firstName);
     return NextResponse.redirect(doneUrl);

@@ -3,8 +3,8 @@
 identity verification for hack club club leaders. after a leader submits the
 "apply - leader profile" fillout form, they're redirected here with their
 fillout submission id. this app runs them through hack club auth (oidc),
-reads their `verification_status`, and updates the matching airtable leaders
-record — or lets them opt out.
+reads their `verification_status`, and upserts the result into an airtable
+`idv_results` table — or lets them opt out.
 
 ## flow
 
@@ -13,7 +13,7 @@ record — or lets them opt out.
 | `/` | landing. two choices: i'm new here, or i already have an account. plus an opt-out link. |
 | `/new-account` | for new leaders. sends them to hack club auth signup (opens in a new tab), then back here to finish. |
 | `/auth/redirect` | builds a signed hmac state and redirects to the oidc authorize endpoint. |
-| `/auth/callback` | verifies state (hmac + freshness), exchanges the code, reads `verification_status`, discards all tokens, updates airtable, redirects to `/done`. |
+| `/auth/callback` | verifies state (hmac + freshness), exchanges the code, reads `verification_status`, discards all tokens, upserts `verified` into `idv_results` (keyed on `submission_id`), redirects to `/done`. |
 | `/opt-out` | confirmation page. confirming marks `opted_out`, deletes the linked clubs record, and redirects to `/removed`. |
 | `/done` | verified. auto-redirects to the application form after 3s. |
 | `/removed` | opt-out confirmed. the application was deleted, so there's no redirect back to the form. |
@@ -40,9 +40,14 @@ record — or lets them opt out.
 
 1. `cp .env.example .env.local` and fill in every value. generate the state
    secret with `openssl rand -hex 32`.
-2. **airtable — manual one-time step:** in the Clubs base, on the
-   **leaders** table, add a single-select field named **`idv_status`** with the
-   options `pending`, `verified`, and `opted_out`.
+2. **airtable — manual one-time step:** in the Clubs base:
+   - create a table named **`idv_results`** with a single-line-text field
+     **`submission_id`** and a single-select field **`idv_status`** with the
+     options `verified` and `opted_out`. `/auth/callback` upserts into this
+     table, keyed on `submission_id`.
+   - on the **leaders** table, add a single-select field named **`idv_status`**
+     with the options `pending`, `verified`, and `opted_out`. the opt-out flow
+     still writes `opted_out` here.
 3. register `HACKCLUB_OAUTH_REDIRECT_URI`
    (e.g. `https://verify.clubs.hackclub.com/auth/callback`) with hack club auth.
 4. `npm install`
