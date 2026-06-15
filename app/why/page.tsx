@@ -58,6 +58,9 @@ export default function WhyPage({
           <p>
             Hack Club was started by privacy nerds - it's personal and non-negotiable for us. <strong>We do not (and never will) sell your personal data.</strong>
           </p>
+          <p>
+            If you have more questions in regards to how identity verification works, reach out to identity@hackclub.com.
+          </p>
         </div>
 
         <div style={{ marginTop: 32 }}>
