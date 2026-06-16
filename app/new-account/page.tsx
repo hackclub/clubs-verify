@@ -6,7 +6,7 @@ import { isDev, DEV_SUBMISSION_ID } from "@/lib/dev";
 export const dynamic = "force-dynamic";
 
 const SIGNUP_URL =
-  "https://auth.hackclub.com/welcome?return_to=https%3A%2F%2Fauth.hackclub.com%2Fverifications%2Fnew";
+  "https://auth.hackclub.com/verifications/new";
 
 export default async function NewAccountPage({
   searchParams,
