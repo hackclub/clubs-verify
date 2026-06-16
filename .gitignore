@@ -30,5 +30,8 @@ next-env.d.ts.bak
 # vercel
 .vercel
 
+# sentry (build-time auth token for source map upload)
+.env.sentry-build-plugin
+
 # isolated verification build dir
 .next-verify/
