@@ -135,7 +135,10 @@ export function getLinkedClubIds(record: AirtableRecord): string[] {
   return linked.filter((v): v is string => typeof v === "string");
 }
 
-/** Deletes a Clubs record by id. */
+/**
+ * Deletes a Clubs record by id. A 404 (record already gone) is treated as
+ * success so the opt-out flow can be safely retried after a partial failure.
+ */
 export async function deleteClub(clubRecordId: string): Promise<void> {
   if (isDemoMode()) {
     warnDemo("Clubs deletion", clubRecordId);
@@ -147,7 +150,7 @@ export async function deleteClub(clubRecordId: string): Promise<void> {
     headers: authHeaders(),
     cache: "no-store",
   });
-  if (!res.ok) {
+  if (!res.ok && res.status !== 404) {
     throw new Error(`Airtable club deletion failed (${res.status})`);
   }
 }

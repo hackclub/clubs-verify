@@ -16,10 +16,31 @@ const optOutLimiter = new RateLimiterMemory({
   duration: 60,
 });
 
-/** Best-effort client IP extraction from proxy headers. */
+// Number of trusted reverse proxies in front of the app (e.g. 1 for a single
+// CDN / load balancer like Vercel). The real client IP is the entry this many
+// hops from the RIGHT of X-Forwarded-For — everything to its left is appended
+// by the client and is attacker-controlled, so we must not key rate limits on
+// it. Taking the leftmost entry (the old behaviour) let anyone bypass the limit
+// by sending a spoofed `X-Forwarded-For` header.
+const TRUSTED_PROXY_HOPS = Math.max(
+  1,
+  Number(process.env.TRUSTED_PROXY_HOPS ?? "1") || 1,
+);
+
+/** Client IP from proxy headers, ignoring client-spoofable XFF entries. */
 export function clientIp(req: Request): string {
   const fwd = req.headers.get("x-forwarded-for");
-  if (fwd) return fwd.split(",")[0]!.trim();
+  if (fwd) {
+    const ips = fwd
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (ips.length > 0) {
+      const idx = ips.length - TRUSTED_PROXY_HOPS;
+      const ip = idx >= 0 ? ips[idx] : ips[0];
+      if (ip) return ip;
+    }
+  }
   return req.headers.get("x-real-ip")?.trim() || "unknown";
 }
 

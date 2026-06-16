@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { isValidSubmissionId } from "@/lib/validate";
 import { createState } from "@/lib/state";
 import { buildAuthorizationUrl } from "@/lib/oidc";
-import { newErrorId, logError } from "@/lib/errors";
+import { captureError } from "@/lib/errors";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,8 +19,7 @@ export async function GET(req: NextRequest) {
     const authUrl = await buildAuthorizationUrl(state);
     return NextResponse.redirect(authUrl);
   } catch (err) {
-    const errorId = newErrorId();
-    logError(errorId, "auth/redirect", err);
+    const errorId = captureError("auth/redirect", err);
     return NextResponse.redirect(new URL(`/error?eid=${errorId}`, req.nextUrl.origin));
   }
 }

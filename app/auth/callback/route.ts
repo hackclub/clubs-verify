@@ -4,7 +4,7 @@ import { exchangeCodeForClaims, isVerified } from "@/lib/oidc";
 import { upsertIdvResult } from "@/lib/airtable";
 import { isValidSubmissionId } from "@/lib/validate";
 import { limitCallback } from "@/lib/rateLimit";
-import { newErrorId, logError } from "@/lib/errors";
+import { captureError } from "@/lib/errors";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -55,8 +55,7 @@ export async function GET(req: NextRequest) {
     if (firstName) doneUrl.searchParams.set("name", firstName);
     return NextResponse.redirect(doneUrl);
   } catch (err) {
-    const eid = newErrorId();
-    logError(eid, "auth/callback", err);
+    const eid = captureError("auth/callback", err);
     return errorRedirect(eid);
   }
 }

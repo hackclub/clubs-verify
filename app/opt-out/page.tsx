@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { isValidSubmissionId } from "@/lib/validate";
 import { isDev, DEV_SUBMISSION_ID } from "@/lib/dev";
+import { createOptOutToken } from "@/lib/optOutToken";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,8 @@ export default async function OptOutPage({
   }
 
   const backHref = `/?id=${encodeURIComponent(id)}`;
+  // Bind a fresh signed token to this id; the POST handler requires it.
+  const optOutToken = createOptOutToken(id);
 
   return (
     <main className="page">
@@ -46,6 +49,7 @@ export default async function OptOutPage({
           {/* Posts to the server handler, which removes the application. */}
           <form action="/api/opt-out" method="post">
             <input type="hidden" name="id" value={id} />
+            <input type="hidden" name="token" value={optOutToken} />
             <button className="option option--danger" type="submit">
               <span className="option-text">
                 <span className="option-title">
