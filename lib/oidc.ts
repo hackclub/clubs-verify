@@ -6,8 +6,9 @@ import { Issuer, type Client } from "openid-client";
 
 const DISCOVERY_URL = "https://auth.hackclub.com/.well-known/openid-configuration";
 // `profile` releases the name / given_name / family_name claims, used for the
-// personalised greeting on /done and /error.
-export const OIDC_SCOPES = "openid email profile verification_status";
+// personalised greeting on /done and /error. `slack_id` releases the user's
+// Slack ID, which we forward to the club application form.
+export const OIDC_SCOPES = "openid email profile verification_status slack_id";
 
 let clientPromise: Promise<Client> | null = null;
 
@@ -54,6 +55,7 @@ export interface VerificationClaims {
   verificationStatus: unknown;
   firstName?: string;
   email?: string;
+  slackId?: string;
 }
 
 /**
@@ -90,10 +92,13 @@ export async function exchangeCodeForClaims(
   try {
     const claims = tokenSet.claims();
     const email = typeof claims.email === "string" ? claims.email : undefined;
+    const slackId =
+      typeof claims["slack_id"] === "string" ? claims["slack_id"] : undefined;
     return {
       verificationStatus: claims["verification_status"],
       firstName: deriveFirstName(claims),
       email,
+      slackId,
     };
   } finally {
     // Drop all token material. Nothing is stored, logged, or returned.

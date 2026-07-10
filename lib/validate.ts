@@ -4,6 +4,21 @@
 
 const ID_PATTERN = /^[A-Za-z0-9-]{10,100}$/;
 
+// Slack IDs are short uppercase-alphanumeric strings (e.g. "U01ABC23DEF").
+// Allowlisted before being written to Airtable, so a malformed / unexpected
+// claim value never lands in the slack_id field.
+const SLACK_ID_PATTERN = /^[A-Z0-9]{6,32}$/;
+
+/**
+ * Returns the Slack ID when it matches the strict allowlist, otherwise
+ * undefined. Used to guard the value before it is persisted to Airtable.
+ */
+export function sanitizeSlackId(input: unknown): string | undefined {
+  return typeof input === "string" && SLACK_ID_PATTERN.test(input)
+    ? input
+    : undefined;
+}
+
 /**
  * Returns true only when `id` is a string of 10-100 chars consisting solely of
  * ASCII alphanumerics and hyphens. Everything else is rejected.

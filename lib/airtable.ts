@@ -99,11 +99,12 @@ export async function upsertIdvResult(
   submissionId: string,
   status: IdvStatus,
   email?: string,
+  slackId?: string,
 ): Promise<void> {
   if (isDemoMode()) {
     warnDemo(
       "idv_results upsert",
-      `submission_id=${submissionId} -> ${status}${email ? ` (email=${email})` : ""}`,
+      `submission_id=${submissionId} -> ${status}${email ? ` (email=${email})` : ""}${slackId ? ` (slack_id=${slackId})` : ""}`,
     );
     return;
   }
@@ -113,6 +114,7 @@ export async function upsertIdvResult(
     idv_status: status,
   };
   if (email) fields.email = email;
+  if (slackId) fields.slack_id = slackId;
 
   const res = await fetch(encodePath(IDV_RESULTS_TABLE), {
     method: "PATCH",

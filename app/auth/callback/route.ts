@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { verifyState } from "@/lib/state";
 import { exchangeCodeForClaims, isVerified } from "@/lib/oidc";
 import { upsertIdvResult } from "@/lib/airtable";
-import { isValidSubmissionId } from "@/lib/validate";
+import { isValidSubmissionId, sanitizeSlackId } from "@/lib/validate";
 import { limitCallback } from "@/lib/rateLimit";
 import { captureError } from "@/lib/errors";
 
@@ -36,10 +36,8 @@ export async function GET(req: NextRequest) {
 
   try {
     // 2. Exchange the code; read verification_status; discard all tokens.
-    const { verificationStatus, firstName, email } = await exchangeCodeForClaims(
-      code,
-      state!,
-    );
+    const { verificationStatus, firstName, email, slackId } =
+      await exchangeCodeForClaims(code, state!);
 
     if (!isVerified(verificationStatus)) {
       const url = new URL("/error", origin);
@@ -50,7 +48,7 @@ export async function GET(req: NextRequest) {
     }
 
     // 3. Verified -> upsert the result into idv_results (keyed on submission_id).
-    await upsertIdvResult(submissionId, "verified", email);
+    await upsertIdvResult(submissionId, "verified", email, sanitizeSlackId(slackId));
     const doneUrl = new URL("/done", origin);
     if (firstName) doneUrl.searchParams.set("name", firstName);
     return NextResponse.redirect(doneUrl);
