@@ -10,6 +10,9 @@ export interface StatePayload {
   submissionId: string;
   nonce: string;
   timestamp: number;
+  // Set when the flow originated from /new-account. On a not-verified callback
+  // this sends the user to sign up / verify instead of the error page.
+  signup?: boolean;
 }
 
 function getSecret(): string {
@@ -27,12 +30,13 @@ function sign(payloadB64: string): string {
 }
 
 /** Builds a signed state token: `<base64url(json)>.<base64url(hmac)>`. */
-export function createState(submissionId: string): string {
+export function createState(submissionId: string, signup = false): string {
   const payload: StatePayload = {
     submissionId,
     nonce: randomBytes(16).toString("hex"),
     timestamp: Date.now(),
   };
+  if (signup) payload.signup = true;
   const payloadB64 = base64url(JSON.stringify(payload));
   return `${payloadB64}.${sign(payloadB64)}`;
 }
@@ -68,7 +72,8 @@ export function verifyState(state: unknown): StatePayload | null {
   if (
     typeof payload?.submissionId !== "string" ||
     typeof payload?.nonce !== "string" ||
-    typeof payload?.timestamp !== "number"
+    typeof payload?.timestamp !== "number" ||
+    (payload.signup !== undefined && typeof payload.signup !== "boolean")
   ) {
     return null;
   }

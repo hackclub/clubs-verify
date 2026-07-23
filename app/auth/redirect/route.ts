@@ -9,13 +9,14 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id");
+  const signup = req.nextUrl.searchParams.get("signup") === "1";
 
   if (!isValidSubmissionId(id)) {
     return new NextResponse("Bad Request: invalid id", { status: 400 });
   }
 
   try {
-    const state = createState(id);
+    const state = createState(id, signup);
     const authUrl = await buildAuthorizationUrl(state);
     return NextResponse.redirect(authUrl);
   } catch (err) {

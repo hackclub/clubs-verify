@@ -5,9 +5,6 @@ import { isDev, DEV_SUBMISSION_ID } from "@/lib/dev";
 
 export const dynamic = "force-dynamic";
 
-const SIGNUP_URL =
-  "https://auth.hackclub.com/verifications/new";
-
 export default async function NewAccountPage({
   searchParams,
 }: {
@@ -24,7 +21,7 @@ export default async function NewAccountPage({
     }
   }
 
-  const authHref = `/auth/redirect?id=${encodeURIComponent(id)}`;
+  const authHref = `/auth/redirect?id=${encodeURIComponent(id)}&signup=1`;
   const backHref = `/?id=${encodeURIComponent(id)}`;
 
   return (
@@ -49,24 +46,15 @@ export default async function NewAccountPage({
             Hack Club. Creating one is quick and free.
           </p>
           <p>
-            <strong>Here&apos;s the plan:</strong> make your account, verify your identity, then come
-            right back here and choose{" "}
-            <em>&ldquo;I already have a Hack Club Auth account&rdquo;</em> to
-            finish your club application.
+            <strong>Here&apos;s the plan:</strong> hit the button below to sign in with
+            Hack Club Auth. If you&apos;re not verified yet, we&apos;ll take you
+            straight to verification so you can finish your club application.
           </p>
         </div>
 
         <div className="option-list" style={{ marginTop: 28 }}>
-          <a
-            className="btn btn-primary"
-            href={SIGNUP_URL}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Create an account
-          </a>
-          <Link className="btn btn-secondary" href={authHref}>
-            I&apos;ve made one, verify me
+          <Link className="btn btn-primary" href={authHref}>
+            Let&apos;s go!
           </Link>
         </div>
 

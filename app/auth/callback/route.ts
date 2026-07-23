@@ -40,6 +40,18 @@ export async function GET(req: NextRequest) {
       await exchangeCodeForClaims(code, state!);
 
     if (!isVerified(verificationStatus)) {
+      // Users who came through /new-account are sent to start verification
+      // rather than to the not-verified error page. return_to points back at
+      // our own /auth/redirect so that, once verified, the OIDC check re-runs
+      // and completes the flow automatically.
+      if (payload.signup) {
+        const returnTo = new URL("/auth/redirect", origin);
+        returnTo.searchParams.set("id", submissionId);
+        returnTo.searchParams.set("signup", "1");
+        const verifyUrl = new URL("https://auth.hackclub.com/portal/verify");
+        verifyUrl.searchParams.set("return_to", returnTo.toString());
+        return NextResponse.redirect(verifyUrl);
+      }
       const url = new URL("/error", origin);
       url.searchParams.set("reason", "not_verified");
       url.searchParams.set("id", submissionId);
